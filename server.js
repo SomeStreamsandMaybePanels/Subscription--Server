@@ -1,40 +1,44 @@
-const http = require('http');
-const url = require('url');
+const express = require('express')
+const bodyParser = require('body-parser')
+const readline = require('readline')
+const { query } = require('./mongodb')
+const { subscribeToChannel } = require('./subscribe')
 
-// Maintain a list of subscribed channel IDs
-const subscribedChannels = new Set();
+const app = express()
+const port = 3000;
 
 
-const server = http.createServer((req, res) => {
-    const { pathname } = url.parse(req.url);
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
 
-    if (pathname === '/subscribe') {
-        // Handle subscription requests
-        const channelID = req.headers['x-channel-id'];
-        subscribedChannels.add(channelID);
-        // Subscribe to the YouTube topic URL for this channel
-        // (You'll need to implement this logic)
+const questions = "Enter your ngrok public URL"
 
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('Subscribed successfully!\n');
-    } else if (pathname === '/unsubscribe') {
-        // Handle unsubscription requests
-        const channelID = req.headers['x-channel-id'];
-        subscribedChannels.delete(channelID);
-        // Unsubscribe from the YouTube topic URL for this channel
-        // (You'll need to implement this logic)
 
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('Unsubscribed successfully!\n');
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// Endpoint to handle subscription verification (GET request)
+app.get('/websub', (req, res) => {
+    const { 'hub.mode': mode, 'hub.topic': topic, 'hub.challenge': challenge, 'hub.lease_seconds': leaseSeconds } = req.query;
+
+    if (mode === 'subscribe' || mode === 'unsubscribe') {
+        console.log(`Subscription mode: ${mode}, Topic: ${topic}, Lease Seconds: ${leaseSeconds}`);
+        res.status(200).send(challenge);
     } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not found\n');
+        res.status(400).send('Bad Request');
     }
 })
 
+// Endpoint to handle notifications (POST request)
+app.post('/websub', (req, res) => {
+    console.log('Notification received:', req.body);
+    res.status(200).send('OK');
+})
 
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+})
 
-const PORT = 3300;
-server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
