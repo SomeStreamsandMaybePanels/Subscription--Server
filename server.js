@@ -7,15 +7,10 @@ const { subscribeToChannel } = require('./subscribe')
 const app = express()
 const port = 3000;
 
-
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 })
-
-const questions = "Enter your ngrok public URL"
-
-
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -41,4 +36,14 @@ app.post('/websub', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+async function main() {
+    rl.question("Enter your ngrok public URL:", async (answer) => {
+        const HUB_URL = answer
+        const TOPICS = await query()
+        TOPICS.forEach(topic => subscribeToChannel(topic.youtubeChannelID, HUB_URL))
 
+    })
+
+}
+
+main()

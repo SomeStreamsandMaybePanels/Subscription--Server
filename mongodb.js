@@ -31,12 +31,12 @@ async function query() {
     const myCollection = await mongoDB.db(process.env.DATABASE).collection(process.env.COLLECTION)
     const query = await myCollection.find(queryObj)
     const allValues = await query.toArray()
+    console.log(allValues)
+    query.close()
     return allValues
   } catch (error) {
     console.error(error)
-  } finally {
-    await query.close()
-
+  
   }
 }
 
