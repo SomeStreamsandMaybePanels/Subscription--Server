@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const readline = require('readline')
@@ -5,7 +6,7 @@ const { query } = require('./mongodb')
 const { subscribeToChannel } = require('./subscribe')
 
 const app = express()
-const port = 3000;
+const port = process.env.PORT
 
 const rl = readline.createInterface({
     input: process.stdin,
