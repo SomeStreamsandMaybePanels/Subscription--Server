@@ -1,17 +1,13 @@
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
-const readline = require('readline')
 const { query } = require('./mongodb')
 const { subscribeToChannel } = require('./subscribe')
 
 const app = express()
 const port = process.env.PORT
+const HUB_URL = process.env.HUB_URL
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -38,12 +34,10 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
 async function main() {
-    rl.question("Enter your ngrok public URL:", async (answer) => {
-        const HUB_URL = answer
-        const TOPICS = await query()
-        TOPICS.forEach(topic => subscribeToChannel(topic.youtubeChannelID, HUB_URL))
+    const TOPICS = await query()
+    TOPICS.forEach(topic => subscribeToChannel(topic.youtubeChannelID, HUB_URL))
 
-    })
+
 
 }
 
