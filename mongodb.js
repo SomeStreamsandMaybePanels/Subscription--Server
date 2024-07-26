@@ -28,7 +28,7 @@ async function query() {
   // ping to confirm successful connection
   console.log('Pinged your deployment. You successfully connected to MongoDB!')
   try {
-    const myCollection = await mongoDB.db(process.env.DATABASE).collection(process.env.COLLECTION)
+    const myCollection = await mongoDB.db(process.env.MONGODB_NAME).collection(process.env.MONGODB_SUBSCRIPTION_CONFIG_COLLECTION)
     const query = await myCollection.find(queryObj)
     const allValues = await query.toArray()
     console.log(allValues)

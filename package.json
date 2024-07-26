@@ -1,7 +1,7 @@
 {
   "name": "subscription-server",
   "version": "0.1.0",
-  "description": "Receives push notifications from youtube regarding livestreams and published vids",
+  "description": "Receives push notifications from youtube regarding livestreams and published videos",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
