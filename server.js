@@ -9,8 +9,7 @@ const app = express()
 const port = process.env.NOTIFICATION_SERVER_PORT
 const HUB_URL = process.env.NOTIFICATION_HUB_URL
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.text({ type: 'application/atom+xml' }))
 
 // Endpoint to handle subscription verification (GET request)
 app.get('/websub', (req, res) => {
@@ -26,24 +25,25 @@ app.get('/websub', (req, res) => {
 
 // Endpoint to handle notifications (POST request)
 app.post('/websub', (req, res) => {
-  console.log('Notification received:', req.body)
+  console.log('Notification received:', req.headers, req.body) // Log headers and body
 
-  // Convert XML to JSON and send it to the parent process
   xml2js.parseString(req.body, (err, result) => {
     if (err) {
       console.error('Error parsing XML:', err)
       process.send({ error: 'Failed to parse XML' })
+      res.status(500).send('Error parsing XML')
     } else {
+      console.log(result.feed.entry[0])
       process.send({ data: result })
+      res.status(200).send('OK')
     }
   })
-
-  res.status(200).send('OK')
 })
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
+
 async function main () {
   const TOPICS = await query()
   TOPICS.forEach(topic => subscribeToChannel(topic.youtubeChannelID, HUB_URL))
