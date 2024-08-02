@@ -38,7 +38,7 @@ const logger = winston.createLogger({
       maxFiles: '7d' // Keep logs for the last 14 days
     }),
     new MongoDB({
-      db: process.env.MONGO_URI,
+      db: process.env.MONGO_URI_WITH_DB,
       collection: 'log',
       level: 'error',
       capped: true,
