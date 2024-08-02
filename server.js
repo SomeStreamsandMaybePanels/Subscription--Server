@@ -34,7 +34,7 @@ app.post('/websub', (req, res) => {
       process.send({ error: 'Failed to parse XML' })
       res.status(500).send('Error parsing XML')
     } else {
-      logger.info(result.feed.entry[0])
+      logger.info(result)
       process.send({ data: result })
       res.status(200).send('OK')
     }
