@@ -1,14 +1,6 @@
 require('dotenv').config()
 const winston = require('winston')
-const { MongoDB } = require('winston-mongodb')
 const DailyRotateFile = require('winston-daily-rotate-file')
-const mongoose = require('mongoose')
-
-// MongoDB connection setup
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
 
 // Define log format
 const logFormat = winston.format.printf(({ level, message, timestamp, stack }) => {
@@ -37,17 +29,6 @@ const logger = winston.createLogger({
       level: 'info',
       maxFiles: '7d' // Keep logs for the last 14 days
     }),
-    new MongoDB({
-      db: process.env.MONGODB_NAME,
-      collection: 'log',
-      level: 'error',
-      capped: true,
-      cappedSize: 10000000, // 10MB
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      )
-    })
   ]
 })
 
