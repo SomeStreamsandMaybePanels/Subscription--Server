@@ -1,6 +1,6 @@
 require('dotenv').config()
 const axios = require('axios')
-const logger = require('./logger')
+const logger = require('../logger')
 const HUB_URL = 'https://pubsubhubbub.appspot.com/subscribe'
 const CALLBACK_URL = process.env.NOTIFICATION_SERVER_URL // Your server's URL for handling subscriptions
 
